@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:15-alpine
+    container_name: db_container
+    restart: always
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    ports:
+      - '${DB_PORT}:5432'
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: app_container
+    restart: always
+    environment:
+      - NODE_ENV=prod
+    ports:
+      - '3000:3000'
+    depends_on:
+      - database
+
+volumes:
+  db_data:
